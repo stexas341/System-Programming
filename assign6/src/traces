@@ -1,0 +1,72 @@
+text:
+   0x8049db5 <readString>:      push   %ebp	#stores ebp
+   0x8049db6 <readString+1>:    mov    %esp,%ebp	#sets esp=ebp
+   0x8049db8 <readString+3>:    sub    $0x38,%esp	#allocate bytes in stack for i
+   0x8049dbb <readString+6>:    movl   $0x0,-0xc(%ebp) #int i = 0;
+   0x8049dc2 <readString+13>:   mov    0x80e3434,%eax	#move stdin pointer to eax
+   0x8049dc7 <readString+18>:   sub    $0xc,%esp  #Allocate space for fgetc argument
+   0x8049dca <readString+21>:   push   %eax	#give to fgetc as param
+   0x8049dcb <readString+22>:   call   0x8059530 <getc>		#call fgetc to read the string
+   0x8049dd0 <readString+27>:   add    $0x10,%esp	#deallocate stack
+   0x8049dd3 <readString+30>:   mov    %eax,-0x10(%ebp)		#move the return value from getc in var c
+   0x8049dd6 <readString+33>:   cmpl   $0xffffffff,-0x10(%ebp)		#compare EOF with c
+   0x8049dda <readString+37>:   je     0x8049df4 <readString+63>	#if c==eof break
+   0x8049ddc <readString+39>:   cmpl   $0xa,-0x10(%ebp)		#compare c with newline
+   0x8049de0 <readString+43>:   je     0x8049df4 <readString+63>	#if (c=='\n')=TRUE then break
+   0x8049de2 <readString+45>:   mov    -0xc(%ebp),%eax		# load i to eax
+   0x8049de5 <readString+48>:   lea    0x1(%eax),%edx i++
+   0x8049de8 <readString+51>:   mov    %edx,-0xc(%ebp) #store the i++
+   0x8049deb <readString+54>:   mov    -0x10(%ebp),%edx # load c into edx
+   0x8049dee <readString+57>:   mov    %dl,-0x2e(%ebp,%eax,1) # store c in buf
+   0x8049df2 <readString+61>:   jmp    0x8049dc2 <readString+13>	#jump to andress readString+13 in the beggining of the while
+   0x8049df4 <readString+63>:   lea    -0x2e(%ebp),%edx #address of buf[0]
+   0x8049df7 <readString+66>:   mov    -0xc(%ebp),%eax #load i into eax
+   0x8049dfa <readString+69>:   add    %edx,%eax #add the offset to the andress
+   0x8049dfc <readString+71>:   movb   $0x0,(%eax) # buf[i] = 0;
+   0x8049dff <readString+74>:   movl   $0x0,-0xc(%ebp)	# i=0
+   0x8049e06 <readString+81>:   jmp    0x8049e21 <readString+108>	#jump to the next loop
+   0x8049e08 <readString+83>:   mov    -0xc(%ebp),%edx		#move i to edx
+   0x8049e0b <readString+86>:   mov    0x8(%ebp),%eax		#move address s to eax
+   0x8049e0e <readString+89>:   add    %eax,%edx		#calculate the address of s[i]
+   0x8049e10 <readString+91>:   lea    -0x2e(%ebp),%ecx #Load the address of buf[i] to ecx
+   0x8049e13 <readString+94>:   mov    -0xc(%ebp),%eax #Load the value of i to eax
+   0x8049e16 <readString+97>:   add    %ecx,%eax #Add the value of ecx (address of buf[i]) to eax
+   0x8049e18 <readString+99>:   movzbl (%eax),%eax #loads the value of buf[i] to eax.
+   0x8049e1b <readString+102>:  mov    %al,(%edx) #stores the value of buf[i] into s[i]
+   0x8049e1d <readString+104>:  addl   $0x1,-0xc(%ebp) # i++
+   0x8049e21 <readString+108>:  cmpl   $0x1d,-0xc(%ebp)		# if i < BUFSIZE;
+   0x8049e25 <readString+112>:  jle    0x8049e08 <readString+83>	if (i >= BUFSIZE) continue into the for loop
+   0x8049e27 <readString+114>:  nop
+   0x8049e28 <readString+115>:  leave
+   0x8049e29 <readString+116>:  ret	 #return from function
+
+data:
+$1 = 0x80e3068 <grade> "3" #dieuthinsh grade einai 0x80e3068
+$2 = 51 '3'#ascii code = 51
+
+bss:
+$3 = (char (*)[30]) 0x80e42dc <Name> #dieuthinsh pinaka name me 30 theseis= 0x80e42dc
+
+stack frame :
+variables:                                   addresses:
+char buf[BUFSIZE]  (char (*)[30])            0xbffff46a
+int c               (int *)                  0xbffff48c
+int i               (int *)                  0xbffff488
+
+(gdb) print $esp
+$1 = (void *) 0xbffff4a0
+
+(gdb) print $ebp
+$2 = (void *) 0xbffff4b8
+
+
+
+(gdb) x/56b $esp
+0xbffff480:     -64     49      14      8       10      0       0       0
+0xbffff488:     18      0       0       0       0       0       96      0
+0xbffff490:     116     -60     12      8       84      3       0       0
+0xbffff498:     0       48      14      8       48      52      14      8
+0xbffff4a0:     1       0       0       0       -108    -11     -1      -65
+0xbffff4a8:     -117    116     5       8       0       48      14      8
+0xbffff4b0:     0       48      14      8       -24     -127    4       8
+0xbffff4b8:     -40     -12     -1      -65     114     -98     4       8
